@@ -196,7 +196,7 @@ revanced_dl(){
 	patch "spotjfy-beta-arm64-v8a" "revanced"
 	# Patch Proton mail
 	get_patches_key "protonmail-revanced"
-	get_apk "ch.protonmail.android" "protonmail-beta" "protonmail-encrypted-email" "proton-technologies-ag/protonmail-encrypted-email/proton-mail-encrypted-email"
+	get_apkpure "ch.protonmail.android" "protonmail-beta" "proton-mail-encrypted-email/ch.protonmail.android"
 	patch "protonmail-beta" "revanced"
 }
 13() {
