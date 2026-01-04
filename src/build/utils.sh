@@ -138,9 +138,9 @@ get_patches_key() {
 # Download apks files from APKMirror:
 _req() {
     if [ "$2" = "-" ]; then
-        wget -nv -O "$2" --header="User-Agent: Mozilla/5.0 (Android 14; Mobile; rv:134.0) Gecko/134.0 Firefox/134.0" --header="Content-Type: application/octet-stream" --header="Accept-Language: en-US,en;q=0.9" --header="Connection: keep-alive" --header="Upgrade-Insecure-Requests: 1" --header="Cache-Control: max-age=0" --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8" --keep-session-cookies --timeout=30 "$1" || rm -f "$2"
+        wget -nv -O "$2" --header="User-Agent: Mozilla/5.0 (Android 15; Mobile; rv:146.0) Gecko/146.0 Firefox/146.0" --header="Content-Type: application/octet-stream" --header="Accept-Language: en-US,en;q=0.9" --header="Connection: keep-alive" --header="Upgrade-Insecure-Requests: 1" --header="Cache-Control: max-age=0" --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8" --keep-session-cookies --timeout=30 "$1" || rm -f "$2"
     else
-        wget -nv -O "./download/$2" --header="User-Agent: Mozilla/5.0 (Android 14; Mobile; rv:134.0) Gecko/134.0 Firefox/134.0" --header="Content-Type: application/octet-stream" --header="Accept-Language: en-US,en;q=0.9" --header="Connection: keep-alive" --header="Upgrade-Insecure-Requests: 1" --header="Cache-Control: max-age=0" --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8" --keep-session-cookies --timeout=30 "$1" || rm -f "./download/$2"
+        wget -nv -O "./download/$2" --header="User-Agent: Mozilla/5.0 (Android 15; Mobile; rv:146.0) Gecko/146.0 Firefox/146.0" --header="Content-Type: application/octet-stream" --header="Accept-Language: en-US,en;q=0.9" --header="Connection: keep-alive" --header="Upgrade-Insecure-Requests: 1" --header="Cache-Control: max-age=0" --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8" --keep-session-cookies --timeout=30 "$1" || rm -f "./download/$2"
     fi
 }
 req() {
@@ -176,16 +176,30 @@ get_apk() {
 			*) url_regexp='$5'"[^@]*$7"''"[^@]*$6"'</div>[^@]*@\([^"]*\)' ;;
 		esac 
 	fi
+
 	if [ -z "$version" ] && [ "$lock_version" != "1" ]; then
-		if [[ $(ls revanced-cli-*.jar) =~ revanced-cli-([0-9]+) ]]; then
-			num=${BASH_REMATCH[1]}
-			if [ $num -ge 5 ]; then
-				version=$(java -jar *cli*.jar list-patches --with-packages --with-versions *.rvp | awk -v pkg="$1" 'BEGIN { found = 0 } /^Index:/ { found = 0 } /Package name: / { if ($3 == pkg) { found = 1 } } /Compatible versions:/ { if (found) { getline; latest_version = $1; while (getline && $1 ~ /^[0-9]+\./) { latest_version = $1 } print latest_version; exit } }')
-			else
-				version=$(jq -r '[.. | objects | select(.name == "'$1'" and .versions != null) | .versions[]] | reverse | .[0] // ""' *.json | uniq)
-			fi
+	  for spec in "revanced-cli-|5|*.rvp" "morphe-cli-|1|*.mpp"; do
+		IFS="|" read -r jar_prefix min_major patch_glob <<<"$spec"
+
+		if [[ $(ls "${jar_prefix}"*.jar 2>/dev/null) =~ ${jar_prefix}([0-9]+) ]]; then
+		  num=${BASH_REMATCH[1]}
+
+		  if [ "$num" -ge "$min_major" ]; then
+			version=$(java -jar *cli*.jar list-patches --with-packages --with-versions $patch_glob | awk -v pkg="$1" '
+			  BEGIN { found = 0 }
+			  /^Index:/ { found = 0 }
+			  /Package name: / { if ($3 == pkg) { found = 1 } }
+			  /Compatible versions:/ { if (found) { getline; latest_version = $1; while (getline && $1 ~ /^[0-9]+\./) { latest_version = $1 } print latest_version; exit } }
+			')
+		  else
+			version=$(jq -r '[.. | objects | select(.name == "'"$1"'" and .versions != null) | .versions[]] | reverse | .[0] // ""' *.json 2>/dev/null | uniq)
+		  fi
 		fi
+
+		[ -n "$version" ] && break
+	  done
 	fi
+
 	export version="$version"
     if [[ -n "$version" ]]; then
         version=$(echo "$version" | tr -d ' ' | sed 's/\./-/g')
@@ -257,15 +271,28 @@ get_apk() {
 }
 get_apkpure() {
 	if [ -z "$version" ] && [ "$lock_version" != "1" ]; then
-		if [[ $(ls revanced-cli-*.jar) =~ revanced-cli-([0-9]+) ]]; then
-			num=${BASH_REMATCH[1]}
-			if [ $num -ge 5 ]; then
-				version=$(java -jar *cli*.jar list-patches --with-packages --with-versions *.rvp | awk -v pkg="$1" 'BEGIN { found = 0 } /^Index:/ { found = 0 } /Package name: / { if ($3 == pkg) { found = 1 } } /Compatible versions:/ { if (found) { getline; latest_version = $1; while (getline && $1 ~ /^[0-9]+\./) { latest_version = $1 } print latest_version; exit } }')
-			else
-				version=$(jq -r '[.. | objects | select(.name == "'$1'" and .versions != null) | .versions[]] | reverse | .[0] // ""' *.json | uniq)
-			fi
+	  for spec in "revanced-cli-|5|*.rvp" "morphe-cli-|1|*.mpp"; do
+		IFS="|" read -r jar_prefix min_major patch_glob <<<"$spec"
+
+		if [[ $(ls "${jar_prefix}"*.jar 2>/dev/null) =~ ${jar_prefix}([0-9]+) ]]; then
+		  num=${BASH_REMATCH[1]}
+
+		  if [ "$num" -ge "$min_major" ]; then
+			version=$(java -jar *cli*.jar list-patches --with-packages --with-versions $patch_glob | awk -v pkg="$1" '
+			  BEGIN { found = 0 }
+			  /^Index:/ { found = 0 }
+			  /Package name: / { if ($3 == pkg) { found = 1 } }
+			  /Compatible versions:/ { if (found) { getline; latest_version = $1; while (getline && $1 ~ /^[0-9]+\./) { latest_version = $1 } print latest_version; exit } }
+			')
+		  else
+			version=$(jq -r '[.. | objects | select(.name == "'"$1"'" and .versions != null) | .versions[]] | reverse | .[0] // ""' *.json 2>/dev/null | uniq)
+		  fi
 		fi
+
+		[ -n "$version" ] && break
+	  done
 	fi
+
 	export version="$version"
 	if [[ $4 == "Bundle" ]] || [[ $4 == "Bundle_extract" ]]; then
 		local base_apk="$2.xapk"
@@ -303,25 +330,25 @@ patch() {
 	if [ -f "./download/$1.apk" ]; then
 		local p b m ks a pu opt force
 		if [ "$3" = inotia ]; then
-			p="patch " b="-p *.rvp" m="" a="" ks="_ks" pu="--purge=true" opt="--legacy-options=./src/options/$2.json" force=" --force"
+			p="patch " b="-p *.rvp" m="" a="" ks=" --keystore=./src/_ks.keystore" pu="--purge=true" opt="--legacy-options=./src/options/$2.json" force=" --force"
 			echo "Patching with Revanced-cli inotia"
-		elif [ "$3" = liso ]; then
-			p="patch " b="-p *.rvp" m="" a="" ks="ks" pu="--purge=true" opt="" force=" --force"
-			echo "Patching with Revanced-cli LisoUseInAIKyrios"
+		elif [ "$3" = morphe ]; then
+			p="patch " b="-p *.mpp" m="" a="" ks="" pu="--purge=true" opt="" force=" --force"
+			echo "Patching with Morphe"
 		else
 			if [[ $(ls revanced-cli-*.jar) =~ revanced-cli-([0-9]+) ]]; then
 				num=${BASH_REMATCH[1]}
 				if [ $num -ge 5 ]; then
-					p="patch " b="-p *.rvp" m="" a="" ks="ks" pu="--purge=true" opt="" force=" --force"
+					p="patch " b="-p *.rvp" m="" a="" ks=" --keystore=./src/ks.keystore" pu="--purge=true" opt="" force=" --force"
 					echo "Patching with Revanced-cli version 5+"
 				elif [ $num -eq 4 ]; then
-					p="patch " b="--patch-bundle *patch*.jar" m="--merge *integration*.apk " a="" ks="ks" pu="--purge=true" opt="--options=./src/options/$2.json "
+					p="patch " b="--patch-bundle *patch*.jar" m="--merge *integration*.apk " a="" ks=" --keystore=./src/ks.keystore" pu="--purge=true" opt="--options=./src/options/$2.json "
 					echo "Patching with Revanced-cli version 4"
 				elif [ $num -eq 3 ]; then
-					p="patch " b="--patch-bundle *patch*.jar" m="--merge *integration*.apk " a="" ks="_ks" pu="--purge=true" opt="--options=./src/options/$2.json "
+					p="patch " b="--patch-bundle *patch*.jar" m="--merge *integration*.apk " a="" ks=" --keystore=./src/_ks.keystore" pu="--purge=true" opt="--options=./src/options/$2.json "
 					echo "Patching with Revanced-cli version 3"
 				elif [ $num -eq 2 ]; then
-					p="" b="--bundle *patch*.jar" m="--merge *integration*.apk " a="--apk " ks="_ks" pu="--clean" opt="--options=./src/options/$2.json " force=" --experimental"
+					p="" b="--bundle *patch*.jar" m="--merge *integration*.apk " a="--apk " ks=" --keystore=./src/_ks.keystore" pu="--clean" opt="--options=./src/options/$2.json " force=" --experimental"
 					echo "Patching with Revanced-cli version 2"
 				fi
 			fi
@@ -329,7 +356,7 @@ patch() {
 		if [ "$3" = inotia ]; then
 			unset CI GITHUB_ACTION GITHUB_ACTIONS GITHUB_ACTOR GITHUB_ENV GITHUB_EVENT_NAME GITHUB_EVENT_PATH GITHUB_HEAD_REF GITHUB_JOB GITHUB_REF GITHUB_REPOSITORY GITHUB_RUN_ID GITHUB_RUN_NUMBER GITHUB_SHA GITHUB_WORKFLOW GITHUB_WORKSPACE RUN_ID RUN_NUMBER
 		fi
-		eval java -jar *cli*.jar $p$b $m$opt --out=./release/$1-$2.apk$excludePatches$includePatches --keystore=./src/$ks.keystore $pu$force $a./download/$1.apk
+		eval java -jar *cli*.jar $p$b $m$opt --out=./release/$1-$2.apk$excludePatches$includePatches$ks $pu$force $a./download/$1.apk
   		unset version
 		unset lock_version
 		unset excludePatches
