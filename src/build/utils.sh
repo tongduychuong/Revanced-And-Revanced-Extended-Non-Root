@@ -7,7 +7,7 @@ wget -q -O ./pup.zip https://github.com/ericchiang/pup/releases/download/v0.4.0/
 unzip "./pup.zip" -d "./" > /dev/null 2>&1
 pup="./pup"
 #Setup APKEditor for install combine split apks
-wget -q -O ./APKEditor.jar https://github.com/REAndroid/APKEditor/releases/download/V1.4.2/APKEditor-1.4.2.jar
+wget -q -O ./APKEditor.jar https://github.com/REAndroid/APKEditor/releases/download/V1.4.7/APKEditor-1.4.7.jar
 APKEditor="./APKEditor.jar"
 
 #################################################
@@ -116,7 +116,7 @@ get_patches_key() {
 				excludePatches+=" -e \"$line1\""
 				excludeLinesFound=true
 			done < src/patches/$1/exclude-patches
-			
+
 			while IFS= read -r line2; do
 				includePatches+=" -i \"$line2\""
 				includeLinesFound=true
@@ -174,7 +174,7 @@ get_apk() {
 			x86) url_regexp='x86'"[^@]*$7"''"[^@]*$6"'</div>[^@]*@\([^"]*\)' ;;
 			x86_64) url_regexp='x86_64'"[^@]*$7"''"[^@]*$6"'</div>[^@]*@\([^"]*\)' ;;
 			*) url_regexp='$5'"[^@]*$7"''"[^@]*$6"'</div>[^@]*@\([^"]*\)' ;;
-		esac 
+		esac
 	fi
 
 	if [ -z "$version" ] && [ "$lock_version" != "1" ]; then
@@ -315,8 +315,23 @@ get_apkpure() {
 		exit 1
 	fi
 	if [[ $4 == "Bundle" ]]; then
-		green_log "[+] Merge splits apk to standalone apk"
-		java -jar $APKEditor m -i ./download/$2.xapk -o ./download/$2.apk > /dev/null 2>&1
+		# Check if the downloaded file is an XAPK (contains .apk files) or already a standalone APK
+		# XAPK files contain multiple .apk files, while APK files contain AndroidManifest.xml
+		if unzip -l "./download/$base_apk" 2>/dev/null | grep -q '\.apk$'; then
+			# It's an XAPK file with .apk files inside, needs merging
+			green_log "[+] Merge splits apk to standalone apk"
+			if ! java -jar $APKEditor m -i ./download/$2.xapk -o ./download/$2.apk > /dev/null 2>&1; then
+				red_log "[-] Failed to merge $2.xapk to standalone apk"
+				exit 1
+			fi
+		elif unzip -l "./download/$base_apk" 2>/dev/null | grep -q 'AndroidManifest.xml'; then
+			# It's already a standalone APK file, just rename it
+			green_log "[+] File is already a standalone APK, renaming"
+			mv "./download/$base_apk" "./download/$2.apk"
+		else
+			red_log "[-] Unknown file format for $base_apk"
+			exit 1
+		fi
 	elif [[ $4 == "Bundle_extract" ]]; then
 		unzip "./download/$base_apk" -d "./download/$(basename "$base_apk" .xapk)" > /dev/null 2>&1
 	fi
@@ -333,7 +348,7 @@ patch() {
 			p="patch " b="-p *.rvp" m="" a="" ks=" --keystore=./src/_ks.keystore" pu="--purge=true" opt="--legacy-options=./src/options/$2.json" force=" --force"
 			echo "Patching with Revanced-cli inotia"
 		elif [ "$3" = morphe ]; then
-			p="patch " b="-p *.mpp" m="" a="" ks="" pu="--purge=true" opt="" force=" --force"
+			p="patch " b="-p *.mpp" m="" a="" ks=" --keystore=./src/morphe.keystore --keystore-password=Morphe --keystore-entry-password=Morphe" pu="--purge=true" opt="" force=" --force"
 			echo "Patching with Morphe"
 		else
 			if [[ $(ls revanced-cli-*.jar) =~ revanced-cli-([0-9]+) ]]; then
@@ -361,7 +376,7 @@ patch() {
 		unset lock_version
 		unset excludePatches
 		unset includePatches
-	else 
+	else
 		red_log "[-] Not found $1.apk"
 		exit 1
 	fi
@@ -401,9 +416,19 @@ split_editor() {
 
 #################################################
 
-# Split architectures using Revanced CLI, created by inotia00
 archs=("arm64-v8a" "armeabi-v7a" "x86_64" "x86")
 libs=("armeabi-v7a x86_64 x86" "arm64-v8a x86_64 x86" "armeabi-v7a arm64-v8a x86" "armeabi-v7a arm64-v8a x86_64")
+
+# Remove unused architectures directly
+apk_editor() {
+	local apk="$1" keep="$2"; shift 2
+	local dir="./download/$apk"
+	rm -rf "$dir" && unzip -q "./download/$apk.apk" -d "$dir" || return 1
+	for r in "$@"; do rm -rf "$dir/lib/$r"; done
+	(cd "$dir" && zip -qr "../$apk-$keep.apk" .)
+}
+
+# Split architectures using Revanced CLI, created by inotia00
 gen_rip_libs() {
 	for lib in $@; do
 		echo -n "--rip-lib "$lib" "
@@ -411,15 +436,13 @@ gen_rip_libs() {
 }
 split_arch() {
 	green_log "[+] Splitting $1 to ${archs[i]}:"
-	if [ -f "./download/$1.apk" ]; then
-		unset CI GITHUB_ACTION GITHUB_ACTIONS GITHUB_ACTOR GITHUB_ENV GITHUB_EVENT_NAME GITHUB_EVENT_PATH GITHUB_HEAD_REF GITHUB_JOB GITHUB_REF GITHUB_REPOSITORY GITHUB_RUN_ID GITHUB_RUN_NUMBER GITHUB_SHA GITHUB_WORKFLOW GITHUB_WORKSPACE RUN_ID RUN_NUMBER
+	if [ -f "./release/$1.apk" ]; then
 		eval java -jar revanced-cli*.jar patch \
 		-p *.rvp \
 		$3 \
 		--keystore=./src/_ks.keystore --force \
-		--legacy-options=./src/options/$2.json $excludePatches$includePatches \
-		--out=./release/$1-${archs[i]}-$2.apk\
-		./download/$1.apk
+		--out=./release/$1-${archs[i]}.apk\
+		./release/$1.apk
 	else
 		red_log "[-] Not found $1.apk"
 		exit 1
