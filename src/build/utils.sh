@@ -9,6 +9,13 @@ pup="./pup"
 #Setup APKEditor for install combine split apks
 wget -q -O ./APKEditor.jar https://github.com/REAndroid/APKEditor/releases/download/V1.4.7/APKEditor-1.4.7.jar
 APKEditor="./APKEditor.jar"
+#Find lastest user_agent
+user_agent=$(wget -qO- https://www.whatismybrowser.com/guides/the-latest-user-agent/firefox | tr '\n' ' ' | sed 's#</tr>#\n#g' | grep 'Firefox (Standard)' | sed -n 's/.*<span class="code">\([^<]*Android[^<]*\)<\/span>.*/\1/p') \
+|| user_agent=
+[ -z "$user_agent" ] && {
+  user_agent='Mozilla/5.0 (Android 16; Mobile; rv:146.0) Gecko/146.0 Firefox/146.0'
+  echo "[-] Can't found lastest user-agent"
+}
 
 #################################################
 
@@ -24,9 +31,9 @@ red_log() {
 
 # Download Github assets requirement:
 dl_gh() {
-	if [ $3 == "prerelease" ]; then
+	if [ "$3" == "prerelease" ]; then
 		local repo=$1
-		for repo in $1 ; do
+		for repo in $1; do
 			local owner=$2 tag=$3 found=0 assets=0
 			releases=$(wget -qO- "https://api.github.com/repos/$owner/$repo/releases")
 			while read -r line; do
@@ -42,20 +49,19 @@ dl_gh() {
 					prerelease=$(echo $line | cut -d ' ' -f 2 | tr -d ',')
 					if [ "$tag" == "prerelease" ] && [ "$prerelease" == "true" ] ; then
 						found=1
-      					elif [ "$tag" == "prerelease" ] && [ "$prerelease" == "false" ]; then
-	   					found=1
+					elif [ "$tag" == "prerelease" ] && [ "$prerelease" == "false" ]; then
+						found=1
 					fi
 				fi
 				if [[ $line == *"\"assets\":"* ]]; then
-					if [ $found -eq 1 ]; then
-						assets=1
-					fi
+					[ $found -eq 1 ] && assets=1
 				fi
 				if [[ $line == *"\"browser_download_url\":"* ]]; then
 					if [ $assets -eq 1 ]; then
 						url=$(echo $line | cut -d '"' -f 4)
-							if [[ $url != *.asc ]]; then
+						if [[ $url != *.asc ]]; then
 							name=$(basename "$url")
+							[[ $tag == prerelease && $name != *dev* ]] && continue
 							wget -q -O "$name" "$url"
 							green_log "[+] Downloading $name from $owner"
 						fi
@@ -70,15 +76,16 @@ dl_gh() {
 			done <<< "$releases"
 		done
 	else
-		for repo in $1 ; do
+		for repo in $1; do
 			tags=$( [ "$3" == "latest" ] && echo "latest" || echo "tags/$3" )
 			wget -qO- "https://api.github.com/repos/$2/$repo/releases/$tags" \
 			| jq -r '.assets[] | "\(.browser_download_url) \(.name)"' \
 			| while read -r url names; do
-   				if [[ $url != *.asc ]]; then
+				if [[ $url != *.asc ]]; then
+					[[ $3 == latest && $names == *dev* ]] && continue
 					green_log "[+] Downloading $names from $2"
-					wget -q -O "$names" $url
-     				fi
+					wget -q -O "$names" "$url"
+				fi
 			done
 		done
 	fi
@@ -138,9 +145,9 @@ get_patches_key() {
 # Download apks files from APKMirror:
 _req() {
     if [ "$2" = "-" ]; then
-        wget -nv -O "$2" --header="User-Agent: Mozilla/5.0 (Android 15; Mobile; rv:146.0) Gecko/146.0 Firefox/146.0" --header="Content-Type: application/octet-stream" --header="Accept-Language: en-US,en;q=0.9" --header="Connection: keep-alive" --header="Upgrade-Insecure-Requests: 1" --header="Cache-Control: max-age=0" --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8" --keep-session-cookies --timeout=30 "$1" || rm -f "$2"
+        wget -nv -O "$2" --header="User-Agent: $user_agent" --header="Content-Type: application/octet-stream" --header="Accept-Language: en-US,en;q=0.9" --header="Connection: keep-alive" --header="Upgrade-Insecure-Requests: 1" --header="Cache-Control: max-age=0" --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8" --keep-session-cookies --timeout=30 "$1" || rm -f "$2"
     else
-        wget -nv -O "./download/$2" --header="User-Agent: Mozilla/5.0 (Android 15; Mobile; rv:146.0) Gecko/146.0 Firefox/146.0" --header="Content-Type: application/octet-stream" --header="Accept-Language: en-US,en;q=0.9" --header="Connection: keep-alive" --header="Upgrade-Insecure-Requests: 1" --header="Cache-Control: max-age=0" --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8" --keep-session-cookies --timeout=30 "$1" || rm -f "./download/$2"
+        wget -nv -O "./download/$2" --header="User-Agent: $user_agent" --header="Content-Type: application/octet-stream" --header="Accept-Language: en-US,en;q=0.9" --header="Connection: keep-alive" --header="Upgrade-Insecure-Requests: 1" --header="Cache-Control: max-age=0" --header="Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8" --keep-session-cookies --timeout=30 "$1" || rm -f "./download/$2"
     fi
 }
 req() {
@@ -201,6 +208,10 @@ get_apk() {
 	fi
 
 	export version="$version"
+
+	version=$(printf '%s\n' "$version" "$prefer_version" | sort -V | tail -n1)
+	unset prefer_version
+
     if [[ -n "$version" ]]; then
         version=$(echo "$version" | tr -d ' ' | sed 's/\./-/g')
         green_log "[+] Downloading $3 version: $version $5 $6 $7"
@@ -294,6 +305,10 @@ get_apkpure() {
 	fi
 
 	export version="$version"
+
+	version=$(printf '%s\n' "$version" "$prefer_version" | sort -V | tail -n1)
+	unset prefer_version
+
 	if [[ $4 == "Bundle" ]] || [[ $4 == "Bundle_extract" ]]; then
 		local base_apk="$2.xapk"
 	else
