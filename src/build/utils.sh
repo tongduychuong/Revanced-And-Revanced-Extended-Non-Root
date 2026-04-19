@@ -399,7 +399,7 @@ patch() {
 			p="patch " b="-p *.rvp" m="" a="" ks=" --keystore=./src/_ks.keystore" pu="--purge=true" opt="--legacy-options=./src/options/$2.json" force=" --force"
 			echo "Patching with Revanced-cli inotia"
 		elif [ "$3" = morphe ]; then
-			p="patch " b="-p *.mpp" m="" a="" ks=" --keystore=./src/morphe.keystore --keystore-password=Morphe --keystore-entry-password=Morphe" pu="--purge=true" opt="--options-file ./src/options/$2.json" force=" --force --continue-on-error"
+			p="patch " b="-p *.mpp" m="" a="" ks=" --keystore=./src/morphe.keystore" pu="--purge=true" opt="--options-file ./src/options/$2.json" force=" --force --continue-on-error"
 			echo "Patching with Morphe"
 		else
 			if [[ $(ls revanced-cli-*.jar) =~ revanced-cli-([0-9]+) ]]; then
@@ -489,7 +489,7 @@ split_arch() {
 		eval java -jar *cli*.jar patch \
 		-p *.mpp $excludePatches$includePatches--options-file ./src/options/$2.json \
 		--striplibs ${archs[i]} --purge=true \
-		--keystore=./src/morphe.keystore --keystore-password=Morphe --keystore-entry-password=Morphe --force \
+		--keystore=./src/morphe.keystore --force \
 		--out=./release/$1-${archs[i]}-$2.apk\
 		./download/$1.apk
 	else
