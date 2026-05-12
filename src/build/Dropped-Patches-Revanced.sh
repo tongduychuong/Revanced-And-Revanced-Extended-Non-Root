@@ -20,14 +20,14 @@ patch "tasker" "indrastorms"
 
 #Patch Nova Launcher:
 get_patches_key "nova-launcher-indrastorms"
-get_apkpure "com.teslacoilsw.launcher" "nova-launcher" "nova-launcher/com.teslacoilsw.launcher"
+get_apk "com.teslacoilsw.launcher" "apk"
 patch "nova-launcher" "indrastorms"
 
 #################################################
 
 #Patch FX File Explorer:
 get_patches_key "fx-file-explorer-indrastorms"
-get_apk "nextapp.fx" "fx-file-explorer" "fx-file-explorer" "nextapp-inc/fx-file-explorer/fx-file-explorer"
+get_apk "nextapp.fx" "fx-file-explorer" "apk"
 patch "fx-file-explorer" "indrastorms"
 
 #################################################

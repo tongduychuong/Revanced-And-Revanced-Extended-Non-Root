@@ -52,7 +52,7 @@ jobs:
       - name: Check new patch Paresh
         id: check-paresh
         if: steps.check-gh.outputs.internet_error == '0'
-        run: bash src/etc/ci.sh Paresh-Maheshwari/paresh-patches latest telegram-web-version-paresh.apk
+        run: bash src/etc/_ci.sh Paresh-Maheshwari/paresh-patches latest telegram-web-version-paresh.apk
       - name: Check new patch hoo-dles
         id: check-hoo-dles
         if: steps.check-gh.outputs.internet_error == '0'

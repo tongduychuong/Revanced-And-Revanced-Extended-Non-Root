@@ -11,7 +11,7 @@ piko_dl(){
 	# Patch Twitter Piko:
 	piko_dl
 	get_patches_key "twitter-piko"
-	get_apk "com.twitter.android" "twitter-stable" "twitter" "x-corp/twitter/x" "Bundle_extract"
+	get_apk "com.twitter.android" "twitter-stable" "bundle_extract" "universal" "120-640dpi" "Android 9.0+" 
 	split_editor "twitter-stable" "twitter-stable"
 	patch "twitter-stable" "piko" "morphe"
 	# Patch Twitter Piko Arm64-v8a:
@@ -23,7 +23,7 @@ piko_dl(){
 	piko_dl
 	# Patch Instagram
 	get_patches_key "instagram-piko"
- 	get_apkpure "com.instagram.android" "instagram-arm64-v8a" "instagram-android/com.instagram.android" "Bundle"
+ 	get_apk "com.instagram.android" "instagram-arm64-v8a" "bundle" "arm64-v8a" "120-640dpi"  "Android 9.0+"
 	patch "instagram-arm64-v8a" "piko" "morphe"
 }
 case "$1" in

@@ -8,7 +8,7 @@ dl_gh "BiliRoamingM" "sakarie9" "latest"
 #################################################
 # Patch bilibili:
 get_patches_key "bilibili-BiliRoamingM"
-get_apk "com.bilibili.app.in" "bilibili" "bilibili" "bilibili/bilibili/bilibili" "Bundle_extract"
+get_apk "com.bilibili.app.in" "bilibili" "bundle_extract"
 split_editor "bilibili" "bilibili"
 patch "bilibili" "BiliRoamingM"
 # Patch bilibili Arm64-v8a:

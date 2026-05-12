@@ -12,12 +12,12 @@ morphe_dl(){
 	# Patch YouTube:
 	#get_patches_key "youtube-morphe"
 	prefer_version="$youtube_experimental_support"
-	get_apk "com.google.android.youtube" "youtube-beta" "youtube" "google-inc/youtube/youtube" "Bundle"
+	get_apk "com.google.android.youtube" "youtube-beta" "bundle"
 	patch "youtube-beta" "morphe" "morphe"
 	# Patch Youtube Arm64-v8a
 	get_patches_key "youtube-morphe"
 	prefer_version="$youtube_experimental_support"
-	get_apk "com.google.android.youtube" "youtube-beta" "youtube" "google-inc/youtube/youtube" "Bundle_extract"
+	get_apk "com.google.android.youtube" "youtube-beta" "bundle_extract"
 	split_editor "youtube-beta" "youtube-beta-arm64-v8a" "exclude" "split_config.armeabi_v7a split_config.x86 split_config.x86_64"
 	patch "youtube-beta-arm64-v8a" "morphe" "morphe"
 	# Patch Youtube Armeabi-v7a
@@ -42,7 +42,7 @@ morphe_dl(){
 	# Patch YouTube Lite Arm64-v8a:
 	get_patches_key "youtube-morphe"
 	prefer_version="$youtube_experimental_support"
-	get_apk "com.google.android.youtube" "youtube-beta-lite" "youtube" "google-inc/youtube/youtube" "Bundle_extract"
+	get_apk "com.google.android.youtube" "youtube-beta-lite" "bundle_extract"
 	split_editor "youtube-beta-lite" "youtube-beta-lite-arm64-v8a" "include" "split_config.arm64_v8a split_config.en split_config.xxxhdpi"
 	patch "youtube-beta-lite-arm64-v8a" "morphe" "morphe"
 	# Patch YouTube Lite Armeabi-v7a:
@@ -52,7 +52,7 @@ morphe_dl(){
 	# Patch Reddit:
 	get_patches_key "reddit-morphe"
 	prefer_version="$reddit_experimental_support"
-	get_apk "com.reddit.frontpage" "reddit-beta" "reddit" "redditinc/reddit/reddit" "Bundle_extract"
+	get_apk "com.reddit.frontpage" "reddit-beta" "bundle_extract"
 	split_editor "reddit-beta" "reddit"
 	patch "reddit-beta" "morphe" "morphe"
 	# Patch Arm64-v8a:
@@ -66,19 +66,19 @@ morphe_dl(){
 	# Arm64-v8a
 	get_patches_key "youtube-music-morphe"
 	prefer_version="$youtube_music_experimental_support"
-	get_apk "com.google.android.apps.youtube.music" "youtube-music-beta-arm64-v8a" "youtube-music" "google-inc/youtube-music/youtube-music" "arm64-v8a"
+	get_apk "com.google.android.apps.youtube.music" "youtube-music-beta-arm64-v8a" "apk" "arm64-v8a"
 	patch "youtube-music-beta-arm64-v8a" "morphe" "morphe"
 	# Armeabi-v7a
 	get_patches_key "youtube-music-morphe"
-	get_apk "com.google.android.apps.youtube.music" "youtube-music-beta-armeabi-v7a" "youtube-music" "google-inc/youtube-music/youtube-music" "armeabi-v7a"
+	get_apk "com.google.android.apps.youtube.music" "youtube-music-beta-armeabi-v7a" "apk" "armeabi-v7a"
 	patch "youtube-music-beta-armeabi-v7a" "morphe" "morphe"
 	# x86_64
 	#get_patches_key "youtube-music-morphe"
-	#get_apk "com.google.android.apps.youtube.music" "youtube-music-beta-x86_64" "youtube-music" "google-inc/youtube-music/youtube-music" "x86_64"
+	#get_apk "com.google.android.apps.youtube.music" "youtube-music-beta-x86_64" "apk" "x86_64"
 	#patch "youtube-music-beta-x86_64" "morphe" "morphe"
 	# x86
 	#get_patches_key "youtube-music-morphe"
-	#get_apk "com.google.android.apps.youtube.music" "youtube-music-beta-x86" "youtube-music" "google-inc/youtube-music/youtube-music" "x86"
+	#get_apk "com.google.android.apps.youtube.music" "youtube-music-beta-x86" "apk" "x86"
 	#patch "youtube-music-beta-x86" "morphe" "morphe"
 }
 case "$1" in

@@ -42,79 +42,81 @@ Download
 <details>
   <summary><h2>Jump list apps</h2></summary>
 
-#### [![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=YouTube&logoColor=white)](?tab=readme-ov-file#youtube)
+#### [![YouTube](https://img.shields.io/badge/YouTube-%23FF0000.svg?style=for-the-badge&logo=YouTube&logoColor=white)](README.md#youtube)
 
-#### [![YouTube Music](https://img.shields.io/badge/YouTube_Music-FF0000?style=for-the-badge&logo=youtube-music&logoColor=white)](?tab=readme-ov-file#youtube-music)
+#### [![YouTube Music](https://img.shields.io/badge/YouTube_Music-FF0000?style=for-the-badge&logo=youtube-music&logoColor=white)](README.md#youtube-music)
 
-#### [![Facebook](https://img.shields.io/badge/Facebook-%231877F2.svg?style=for-the-badge&logo=Facebook&logoColor=white)](?tab=readme-ov-file#facebook)
+#### [![Facebook](https://img.shields.io/badge/Facebook-%231877F2.svg?style=for-the-badge&logo=Facebook&logoColor=white)](README.md#facebook)
 
-#### [![Messenger](https://img.shields.io/badge/Messenger-00B2FF?style=for-the-badge&logo=messenger&logoColor=white)](?tab=readme-ov-file#messenger)
+#### [![Messenger](https://img.shields.io/badge/Messenger-00B2FF?style=for-the-badge&logo=messenger&logoColor=white)](README.md#messenger)
 
-#### [![Twitter](https://img.shields.io/badge/Twitter-%231DA1F2.svg?style=for-the-badge&logo=Twitter&logoColor=white)](?tab=readme-ov-file#twitter)
+#### [![Twitter](https://img.shields.io/badge/Twitter-%231DA1F2.svg?style=for-the-badge&logo=Twitter&logoColor=white)](README.md#twitter)
 
-#### [![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?style=for-the-badge&logo=Instagram&logoColor=white)](?tab=readme-ov-file#instagram)
+#### [![Instagram](https://img.shields.io/badge/Instagram-%23E4405F.svg?style=for-the-badge&logo=Instagram&logoColor=white)](README.md#instagram)
 
-#### [![Threads](https://img.shields.io/badge/Threads-000000?style=for-the-badge&logo=Threads&logoColor=white)](?tab=readme-ov-file#threads)
+#### [![Threads](https://img.shields.io/badge/Threads-000000?style=for-the-badge&logo=Threads&logoColor=white)](README.md#threads)
 
-#### [![TikTok](https://img.shields.io/badge/TikTok-%23000000.svg?style=for-the-badge&logo=TikTok&logoColor=white)](?tab=readme-ov-file#tiktok)
+#### [![TikTok](https://img.shields.io/badge/TikTok-%23000000.svg?style=for-the-badge&logo=TikTok&logoColor=white)](README.md#tiktok)
 
-#### [![Twitch](https://img.shields.io/badge/Twitch-%239146FF.svg?style=for-the-badge&logo=Twitch&logoColor=white)](?tab=readme-ov-file#twitch)
+#### [![Twitch](https://img.shields.io/badge/Twitch-%239146FF.svg?style=for-the-badge&logo=Twitch&logoColor=white)](README.md#twitch)
 
-#### [![Reddit](https://img.shields.io/badge/Reddit-%23FF4500.svg?style=for-the-badge&logo=Reddit&logoColor=white)](?tab=readme-ov-file#reddit)
+#### [![Reddit](https://img.shields.io/badge/Reddit-%23FF4500.svg?style=for-the-badge&logo=Reddit&logoColor=white)](README.md#reddit)
 
-#### [![Lightroom](https://img.shields.io/badge/Adobe%20Lightroom-31A8FF.svg?style=for-the-badge&logo=Adobe%20Lightroom&logoColor=white)](?tab=readme-ov-file#lightroom)
+#### [![Lightroom](https://img.shields.io/badge/Adobe%20Lightroom-31A8FF.svg?style=for-the-badge&logo=Adobe%20Lightroom&logoColor=white)](README.md#lightroom)
 
-#### [![Tumblr](https://img.shields.io/badge/Tumblr-%2336465D.svg?style=for-the-badge&logo=Tumblr&logoColor=white)](?tab=readme-ov-file#tumblr)
+#### [![Tumblr](https://img.shields.io/badge/Tumblr-%2336465D.svg?style=for-the-badge&logo=Tumblr&logoColor=white)](README.md#tumblr)
 
-#### [![SoundCloud](https://img.shields.io/badge/soundcloud-FF5500?style=for-the-badge&logo=soundcloud&logoColor=white)](?tab=readme-ov-file#soundcloud)
+#### [![SoundCloud](https://img.shields.io/badge/soundcloud-FF5500?style=for-the-badge&logo=soundcloud&logoColor=white)](README.md#soundcloud)
 
-#### [![Duolingo](https://img.shields.io/badge/Duolingo-%234DC730.svg?style=for-the-badge&logo=Duolingo&logoColor=white)](?tab=readme-ov-file#duolingo)
+#### [![Duolingo](https://img.shields.io/badge/Duolingo-%234DC730.svg?style=for-the-badge&logo=Duolingo&logoColor=white)](README.md#duolingo)
 
-#### [![Viber](https://img.shields.io/badge/Viber-8B66A9?style=for-the-badge&logo=viber&logoColor=white)](?tab=readme-ov-file#viber)
+#### [![Viber](https://img.shields.io/badge/Viber-8B66A9?style=for-the-badge&logo=viber&logoColor=white)](README.md#viber)
 
-#### [![Protonmail](https://img.shields.io/badge/ProtonMail-8B89CC?style=for-the-badge&logo=protonmail&logoColor=white)](?tab=readme-ov-file#proton-mail)
+#### [![Discord](https://img.shields.io/badge/Discord-%235865F2.svg?style=for-the-badge&logo=discord&logoColor=white)](README.md#discord)
 
-#### [![Prime Video](https://img.shields.io/badge/Amazon%20Prime-0F79AF?style=for-the-badge&logo=amazonprime&logoColor=white)](?tab=readme-ov-file#prime-video)
+#### [![Protonmail](https://img.shields.io/badge/ProtonMail-8B89CC?style=for-the-badge&logo=protonmail&logoColor=white)](README.md#proton-mail)
 
-#### [![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](?tab=readme-ov-file#Telegram-1)
+#### [![Prime Video](https://img.shields.io/badge/Amazon%20Prime-0F79AF?style=for-the-badge&logo=amazonprime&logoColor=white)](README.md#prime-video)
 
-#### [Google Photos](?tab=readme-ov-file#google-photos-1)
+#### [![Telegram](https://img.shields.io/badge/Telegram-2CA5E0?style=for-the-badge&logo=telegram&logoColor=white)](README.md#Telegram-1)
 
-#### [Adguard](?tab=readme-ov-file#adguard-1)
+#### [Google Photos](README.md#google-photos-1)
 
-#### [Smart Launcher](?tab=readme-ov-file#smart-launcher-1)
+#### [Adguard](README.md#adguard-1)
 
-#### [WPS Office](?tab=readme-ov-file#wps-office-1)
+#### [Smart Launcher](README.md#smart-launcher-1)
 
-#### [Proton VPN](?tab=readme-ov-file#proton-vpn-1)
+#### [WPS Office](README.md#wps-office-1)
 
-#### [Google News](?tab=readme-ov-file#google-news-1)
+#### [Proton VPN](README.md#proton-vpn-1)
 
-#### [Photomath](?tab=readme-ov-file#photomath-1)
+#### [Google News](README.md#google-news-1)
 
-#### [Truecaller](?tab=readme-ov-file#truecaller-1)
+#### [Photomath](README.md#photomath-1)
 
-#### [EyeconCaller](?tab=readme-ov-file#tyeconcaller-1)
+#### [Truecaller](README.md#truecaller-1)
 
-#### [RAR](?tab=readme-ov-file#rar-1)
+#### [EyeconCaller](README.md#tyeconcaller-1)
 
-#### [Strava](?tab=readme-ov-file#strava-1)
+#### [RAR](README.md#rar-1)
 
-#### [Pixiv](?tab=readme-ov-file#pixiv-1)
+#### [Strava](README.md#strava-1)
 
-#### [Bilbili](?tab=readme-ov-file#bilbili-1)
+#### [Pixiv](README.md#pixiv-1)
 
-#### [Solid Explorer File Manager](?tab=readme-ov-file#solid-explorer-file-manager-1)
+#### [Bilbili](README.md#bilbili-1)
 
-#### [Nova Launcher](?tab=readme-ov-file#nova-launcher-1)
+#### [Solid Explorer File Manager](README.md#solid-explorer-file-manager-1)
 
-#### [Tasker](?tab=readme-ov-file#tasker-1)
+#### [Nova Launcher](README.md#nova-launcher-1)
 
-#### [FX File Explorer](?tab=readme-ov-file#fx-file-explorer-1)
+#### [Tasker](README.md#tasker-1)
 
-#### [MyFitnessPal](?tab=readme-ov-file#MyFitnessPal-1)
+#### [FX File Explorer](README.md#fx-file-explorer-1)
 
-#### [Google Recorder](?tab=readme-ov-file#Google-Recorder-1)
+#### [MyFitnessPal](README.md#MyFitnessPal-1)
+
+#### [Google Recorder](README.md#Google-Recorder-1)
 
 </details>
 
@@ -716,6 +718,14 @@ Download
 
 ---
 
+### [Discord:](https://play.google.com/store/apps/details?id=com.discord)
+
+### [Revenge:](https://github.com/revenge-mod/revenge-xposed)
+
+[All Architectures](../../releases/download/all/discord-revenge-lspatched.apk )
+
+---
+
 ### [Telegram:](https://play.google.com/store/apps/details?id=org.telegram.messenger)
 
 ### [Paresh Patches:](https://play.google.com/store/apps/details?id=com.eyecon.global)
@@ -952,12 +962,6 @@ Web version:
 
 [APKEditor](https://github.com/REAndroid/APKEditor) - [Apache-2.0](https://github.com/REAndroid/APKEditor/blob/master/LICENSE)
 
+[FlareSolverr](https://github.com/FlareSolverr/FlareSolverr) - [MIT](https://github.com/FlareSolverr/FlareSolverr/blob/master/LICENSE)
+
 ---
-
-### ⚠️ Inspired by:
-
-[@luxysiv](https://github.com/luxysiv/yt-revanced-nonroot) - [GPL-3.0](https://github.com/luxysiv/revanced-nonroot/blob/main/LICENSE)
-
-[revanced-build-template](https://github.com/n0k0m3/revanced-build-template) - [GPL-3.0](https://github.com/n0k0m3/revanced-build-template/blob/main/LICENSE)
-
-[revanced-magisk-module](https://github.com/j-hc/revanced-magisk-module) - [GPL-3.0](https://github.com/j-hc/revanced-magisk-module/blob/main/LICENSE)

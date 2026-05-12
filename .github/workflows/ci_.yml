@@ -1,0 +1,28 @@
+name: 3. Another Patch
+permissions: write-all
+on:
+  schedule:
+    - cron: "0 0 */3 * *"
+  workflow_dispatch:
+
+jobs:
+  Patch-Xposed:
+    name: Patch Xposed
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4.2.2
+      - name: Preparing to patch
+        uses: ./.github/actions/preparing
+      - name: Check github connection
+        id: check-gh-xposed
+        run: bash src/etc/connection.sh
+      - name: Patch apk
+        id: patch-xposed
+        if: steps.check-gh-xposed.outputs.internet_error == '0'
+        run: bash src/build/Xposed.sh
+      - name: Releasing APK files
+        id: release-xposed
+        if: steps.check-gh-xposed.outputs.internet_error == '0'
+        uses: ./.github/actions/release
+
