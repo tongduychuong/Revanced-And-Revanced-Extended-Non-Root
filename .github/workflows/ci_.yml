@@ -2,16 +2,20 @@ name: 3. Another Patch
 permissions: write-all
 on:
   schedule:
-    - cron: "0 0 */3 * *"
+    - cron: "0 10 * * *"
   workflow_dispatch:
 
 jobs:
   Patch-Xposed:
     name: Patch Xposed
     runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        run: [1, 2]
     steps:
       - name: Checkout
-        uses: actions/checkout@v4.2.2
+        uses: actions/checkout@v6.0.2
       - name: Preparing to patch
         uses: ./.github/actions/preparing
       - name: Check github connection
@@ -20,7 +24,7 @@ jobs:
       - name: Patch apk
         id: patch-xposed
         if: steps.check-gh-xposed.outputs.internet_error == '0'
-        run: bash src/build/Xposed.sh
+        run: bash src/build/Xposed.sh ${{ matrix.run }}
       - name: Releasing APK files
         id: release-xposed
         if: steps.check-gh-xposed.outputs.internet_error == '0'

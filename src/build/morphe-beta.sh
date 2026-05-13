@@ -10,7 +10,7 @@ morphe_dl(){
 	morphe_dl
 
 	# Patch YouTube:
-	#get_patches_key "youtube-morphe"
+	get_patches_key "youtube-morphe"
 	prefer_version="$youtube_experimental_support"
 	get_apk "com.google.android.youtube" "youtube-beta" "bundle"
 	patch "youtube-beta" "morphe" "morphe"

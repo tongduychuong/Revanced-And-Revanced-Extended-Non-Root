@@ -11,6 +11,7 @@ morphe_dl(){
 	# Patch YouTube:
 	get_patches_key "youtube-morphe"
 	get_apk "com.google.android.youtube" "youtube" "apk"
+	patch "youtube" "morphe" "morphe"
 	# Remove unused architectures
 	for i in {0..3}; do
 		split_arch "youtube" "morphe"

@@ -31,7 +31,7 @@ derevanced_dl(){
 	# Patch Facebook:
 	# Arm64-v8a
 	get_patches_key "facebook-derevanced"
-	get_apk "com.facebook.orca" "facebook-arm64-v8a" "bundle" "arm64-v8a" "nodpi" "Android 11+"
+	get_apk "com.facebook.katana" "facebook-arm64-v8a" "bundle" "arm64-v8a" "nodpi" "Android 11+"
 	patch "facebook-arm64-v8a" "derevanced" "morphe"
 }
 3() {
