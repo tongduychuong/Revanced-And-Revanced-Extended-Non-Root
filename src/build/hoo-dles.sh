@@ -23,7 +23,7 @@ hoo-dles_dl(){
 	hoo-dles_dl
 	# Patch Duolingo
 	get_patches_key "duolingo-hoo-dles"
-	get_apk "com.duolingo" "duolingo" "bundle" "universal" "120-640dpi" "Android 8.0+"
+	get_apk "com.duolingo" "duolingo" "bundle" "universal" "120-640dpi"
 	patch "duolingo" "hoo-dles" "morphe"
 	# Patch Proton VPN
 	get_patches_key "Proton-VPN-hoo-dles"

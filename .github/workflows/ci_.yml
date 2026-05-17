@@ -1,8 +1,6 @@
 name: 3. Another Patch
 permissions: write-all
 on:
-  schedule:
-    - cron: "0 10 * * *"
   workflow_dispatch:
 
 jobs:
