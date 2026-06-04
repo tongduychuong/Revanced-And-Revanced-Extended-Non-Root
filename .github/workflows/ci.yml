@@ -106,6 +106,7 @@ jobs:
     needs: check
     if: ${{ needs.check.outputs.check_morphe == 1 }}
     uses: ./.github/workflows/manual-patch.yml
+    secrets: inherit
     with:
       org: "Morphe"
   Patch-Morphe-Beta:
@@ -113,6 +114,7 @@ jobs:
     needs: check
     if: ${{ needs.check.outputs.check_morphe_beta == 1 }}
     uses: ./.github/workflows/manual-patch.yml
+    secrets: inherit
     with:
       org: "Morphe Beta"
   Patch-RVE-anddea-stable:
@@ -120,6 +122,7 @@ jobs:
     needs: check
     if: ${{ needs.check.outputs.check_rve_anddea_stable == 1 }}
     uses: ./.github/workflows/manual-patch.yml
+    secrets: inherit
     with:
       org: "RVE-anddea-stable"
   Patch-RVE-anddea-beta:
@@ -127,6 +130,7 @@ jobs:
     needs: check
     if: ${{ needs.check.outputs.check_rve_anddea_beta == 1 }}
     uses: ./.github/workflows/manual-patch.yml
+    secrets: inherit
     with:
       org: "RVE-anddea-beta"
   Patch-Revanced-Extended-Arsclib:
@@ -134,6 +138,7 @@ jobs:
     needs: check
     if: ${{ needs.check.outputs.check_rve_arsclib == 1 }}
     uses: ./.github/workflows/manual-patch.yml
+    secrets: inherit
     with:
       org: "Revanced Extended Arsclib"
   Patch-Twitter-Piko-Stable:
@@ -141,6 +146,7 @@ jobs:
     needs: check
     if: ${{ needs.check.outputs.check_twitter_piko_stable == 1 }}
     uses: ./.github/workflows/manual-patch.yml
+    secrets: inherit
     with:
       org: "Twitter Piko Stable"
   Patch-Twitter-Piko-Beta:
@@ -148,6 +154,7 @@ jobs:
     needs: check
     if: ${{ needs.check.outputs.check_twitter_piko_beta == 1 }}
     uses: ./.github/workflows/manual-patch.yml
+    secrets: inherit
     with:
       org: "Twitter Piko Beta"
   Patch-DeRevanced:
@@ -155,6 +162,7 @@ jobs:
     needs: check
     if: ${{ needs.check.outputs.check_derv == 1 }}
     uses: ./.github/workflows/manual-patch.yml
+    secrets: inherit
     with:
       org: "DeRevanced"
   Patch-Paresh:
@@ -162,6 +170,7 @@ jobs:
     needs: check
     if: ${{ needs.check.outputs.check_paresh == 1 }}
     uses: ./.github/workflows/manual-patch.yml
+    secrets: inherit
     with:
       org: "Paresh"
   Patch-hoo-dles:
@@ -169,6 +178,7 @@ jobs:
     needs: check
     if: ${{ needs.check.outputs.check_hoo_dles == 1 }}
     uses: ./.github/workflows/manual-patch.yml
+    secrets: inherit
     with:
       org: "hoo-dles"
   Patch-BiliRoamingM:
@@ -176,6 +186,7 @@ jobs:
     needs: check
     if: ${{ needs.check.outputs.check_BiliRoamingM == 1 }}
     uses: ./.github/workflows/manual-patch.yml
+    secrets: inherit
     with:
       org: "BiliRoamingM"
   Patch-Revanced-Experiments:
@@ -183,5 +194,6 @@ jobs:
     needs: check
     if: ${{ needs.check.outputs.check_Revanced_Experiments == 1 }}
     uses: ./.github/workflows/manual-patch.yml
+    secrets: inherit
     with:
       org: "Revanced Experiments"
