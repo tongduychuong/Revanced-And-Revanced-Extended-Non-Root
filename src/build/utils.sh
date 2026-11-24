@@ -9,8 +9,8 @@ pup="./pup"
 #Setup APKEditor for install combine split apks
 wget -q -O ./APKEditor.jar https://github.com/REAndroid/APKEditor/releases/download/V1.4.9/APKEditor-1.4.9.jar
 APKEditor="./APKEditor.jar"
-#Find lastest user_agent
-user_agent=$(wget -qO- https://www.whatismybrowser.com/guides/the-latest-user-agent/firefox | tr '\n' ' ' | sed 's#</tr>#\n#g' | grep 'Firefox (Standard)' | sed -n 's/.*<span class="code">\([^<]*Android[^<]*\)<\/span>.*/\1/p') \
+#Seed user_agent; replaced at runtime by the UA of whichever CF bypass service answered
+user_agent=$(wget -qO- --timeout=15 --tries=1 https://www.whatismybrowser.com/guides/the-latest-user-agent/firefox | tr '\n' ' ' | sed 's#</tr>#\n#g' | grep 'Firefox (Standard)' | sed -n 's/.*<span class="code">\([^<]*Android[^<]*\)<\/span>.*/\1/p') \
 || user_agent=
 [ -z "$user_agent" ] && {
   user_agent='Mozilla/5.0 (Android 16; Mobile; rv:146.0) Gecko/146.0 Firefox/146.0'
@@ -137,6 +137,8 @@ dl_gl() {
 get_patches_key() {
 	excludePatches=""
 	includePatches=""
+	keepPrefix=""
+	exclusivePatches=""
 	excludeLinesFound=false
 	includeLinesFound=false
 
@@ -145,6 +147,10 @@ get_patches_key() {
 
 	sed -i 's/\r$//' "$patchDir/include-patches"
 	sed -i 's/\r$//' "$patchDir/exclude-patches"
+	if [ -f "$patchDir/keep-prefix" ]; then
+		sed -i 's/\r$//' "$patchDir/keep-prefix"
+		keepPrefix=$(grep -m1 -v '^[[:space:]]*$' "$patchDir/keep-prefix" | sed 's/[[:space:]]*$//')
+	fi
 
 	while IFS= read -r line1 || [[ -n "$line1" ]]; do
 		[[ -z "$line1" ]] && continue
@@ -166,8 +172,21 @@ get_patches_key() {
 		includePatches=""
 	fi
 
+	if [ -f "$patchDir/exclusive" ]; then
+		sed -i 's/\r$//' "$patchDir/exclusive"
+		case "$(grep -m1 -v '^[[:space:]]*$' "$patchDir/exclusive" | tr -d '[:space:]')" in
+			1|true|yes|on) exclusivePatches=" --exclusive" ;;
+		esac
+	fi
+	if [ -n "$exclusivePatches" ] && [ "$includeLinesFound" = false ]; then
+		yellow_log "[!] exclusive is on but include-patches is empty, ignoring: $1"
+		exclusivePatches=""
+	fi
+
 	export excludePatches
 	export includePatches
+	export keepPrefix
+	export exclusivePatches
 }
 
 #################################################
@@ -266,7 +285,9 @@ _fs_get() {
 			html=$(echo "$response" | jq -r '.solution.response // empty')
 			export FS_COOKIES
 			FS_COOKIES=$(echo "$response" | jq -r '[.solution.cookies[] | .name + "=" + .value] | join("; ")')
-			user_agent=$(echo "$response" | jq -r '.solution.userAgent // empty')
+			local fs_ua
+			fs_ua=$(echo "$response" | jq -r '.solution.userAgent // empty')
+			[[ -n "$fs_ua" ]] && user_agent="$fs_ua"
 			return 0
 		fi
 		yellow_log "[!] FlareSolverr attempt $attempt/$max_retries failed: $url"
@@ -318,6 +339,13 @@ _cf_get() {
 		_FFS_FAILED=1
 	fi
 	_cfb_get "$@"
+}
+
+_is_archive() {
+	local f=$1 magic
+	[[ -s "$f" ]] || return 1
+	magic=$(head -c 4 "$f" 2>/dev/null | od -An -tx1 | tr -d ' \n')
+	[[ "$magic" == "504b0304" || "$magic" == "504b0506" ]]
 }
 
 get_apk() {
@@ -554,16 +582,39 @@ get_apk() {
 	final_href=$(echo "$final_href" | sed 's/&amp;/\&/g')
 
 	echo "$base_url$final_href"
-	local cookie_args=()
-	[[ -n "$FS_COOKIES" ]] && cookie_args=(--header "Cookie: $FS_COOKIES")
-	wget -nv -O "./download/$base_apk" \
-		--header="User-Agent: $user_agent" \
-		--referer="$base_url$dl_btn_href" \
-		"${cookie_args[@]}" \
-		--timeout=120 \
-		"$base_url$final_href"
 
-	if [[ -f "./download/$base_apk" ]]; then
+	local dl_ok=0 attempt
+	for attempt in 1 2 3; do
+		local cookie_args=()
+		[[ -n "$FS_COOKIES" ]] && cookie_args=(--header "Cookie: $FS_COOKIES")
+		rm -f "./download/$base_apk"
+		wget -nv -O "./download/$base_apk" \
+			--header="User-Agent: $user_agent" \
+			--header="Accept: */*" \
+			--referer="$base_url$dl_btn_href" \
+			"${cookie_args[@]}" \
+			--timeout=120 \
+			"$base_url$final_href"
+
+		if _is_archive "./download/$base_apk"; then
+			dl_ok=1
+			break
+		fi
+
+		yellow_log "[!] Download attempt $attempt/3 returned invalid content (Cloudflare), refreshing session"
+		rm -f "./download/$base_apk"
+		_cf_get "$base_url$dl_btn_href" || return 1
+		final_href=$(echo "$html" | $pup 'a#download-link attr{href}' | head -1)
+		[[ -z "$final_href" ]] && \
+			final_href=$(echo "$html" | grep -oP 'id="download-link"[^>]*href="\K[^"]+' | head -1)
+		if [[ -z "$final_href" ]]; then
+			red_log "[-] Could not find final download link"
+			return 1
+		fi
+		final_href=$(echo "$final_href" | sed 's/&amp;/\&/g')
+	done
+
+	if [[ "$dl_ok" -eq 1 ]]; then
 		green_log "[+] Successfully downloaded $apk_name"
 	else
 		red_log "[-] Failed to download $apk_name"
@@ -632,16 +683,37 @@ get_apkpure() {
 	fi
 	echo "$download_url"
 
-	local cookie_args=()
-	[[ -n "$FS_COOKIES" ]] && cookie_args=(--header "Cookie: $FS_COOKIES")
-	wget -nv -O "./download/$base_apk" \
-		--header="User-Agent: $user_agent" \
-		--referer="$dl_page_url" \
-		"${cookie_args[@]}" \
-		--timeout=120 \
-		"$download_url"
+	local dl_ok=0 attempt
+	for attempt in 1 2 3; do
+		local cookie_args=()
+		[[ -n "$FS_COOKIES" ]] && cookie_args=(--header "Cookie: $FS_COOKIES")
+		rm -f "./download/$base_apk"
+		wget -nv -O "./download/$base_apk" \
+			--header="User-Agent: $user_agent" \
+			--header="Accept: */*" \
+			--referer="$dl_page_url" \
+			"${cookie_args[@]}" \
+			--timeout=120 \
+			"$download_url"
 
-	if [[ -f "./download/$base_apk" ]]; then
+		if _is_archive "./download/$base_apk"; then
+			dl_ok=1
+			break
+		fi
+
+		yellow_log "[!] Download attempt $attempt/3 returned invalid content (Cloudflare), refreshing session"
+		rm -f "./download/$base_apk"
+		_cf_get "$dl_page_url" || return 1
+		download_url=$(echo "$html" | $pup 'a#download_link attr{href}' | head -1)
+		[[ -z "$download_url" ]] && \
+			download_url=$(echo "$html" | grep -oP '<a[^>]+id="download_link"[^>]+href="\Khttps://[^"]+' | head -1)
+		if [[ -z "$download_url" ]]; then
+			red_log "[-] Could not find download link on APKPure"
+			return 1
+		fi
+	done
+
+	if [[ "$dl_ok" -eq 1 ]]; then
 		green_log "[+] Successfully downloaded $apk_name"
 	else
 		red_log "[-] Failed to download $apk_name"
@@ -867,7 +939,11 @@ reseam_selection_args() {
 		' "$options_file" 2> /dev/null)
 	fi
 
-	[ -n "$exclusive" ] && args=" --preset none$enables$args" || args="$enables$args"
+	if [ -n "$exclusive" ] || [ -n "$exclusivePatches" ]; then
+		args=" --preset none$enables$args"
+	else
+		args="$enables$args"
+	fi
 	printf '%s' "$args"
 }
 
@@ -909,10 +985,67 @@ reseam_patch() {
 	return $rc
 }
 
+morphe_auto_exclude() {
+	local prefix="$1"
+	shift
+	local bundles=("$@")
+	local key="$prefix|${bundles[*]}"
+	local name pkgs p bundle catalog records family_pkgs=" "
+
+	if [ "$_MORPHE_AUTO_KEY" != "$key" ]; then
+		local list_args=()
+		for bundle in "${bundles[@]}"; do
+			list_args+=("--patches=$bundle")
+		done
+		catalog=$(java -jar morphe-desktop-*.jar list-patches --with-packages "${list_args[@]}" 2> /dev/null)
+		if [ -z "$catalog" ]; then
+			red_log "[-] Cannot read the Morphe patch list" >&2
+			return 1
+		fi
+		records=$(printf '%s\n' "$catalog" | awk '
+			function flush() { if (name != "") print name "\t" pkgs; name = ""; pkgs = "" }
+			/^Index: / { flush(); next }
+			/^Name: / { name = substr($0, 7); next }
+			/^[[:space:]]*Package name: / {
+				p = $0
+				sub(/^[[:space:]]*Package name: /, "", p)
+				sub(/[[:space:]]+$/, "", p)
+				pkgs = (pkgs == "" ? p : pkgs "," p)
+				next
+			}
+			END { flush() }
+		')
+		local -a pkgs_list
+		while IFS=$'\t' read -r name pkgs; do
+			[ -z "$name" ] && continue
+			case "$name" in "$prefix"*) ;; *) continue ;; esac
+			IFS=',' read -r -a pkgs_list <<< "$pkgs"
+			for p in "${pkgs_list[@]}"; do
+				case "$family_pkgs" in
+					*" $p "*) ;;
+					*) family_pkgs+="$p " ;;
+				esac
+			done
+		done <<< "$records"
+		_MORPHE_AUTO_ARGS=""
+		while IFS=$'\t' read -r name pkgs; do
+			[ -z "$name" ] && continue
+			case "$name" in "$prefix"*) continue ;; esac
+			[[ "$pkgs" == *,* ]] && continue
+			case "$family_pkgs" in
+				*" $pkgs "*) _MORPHE_AUTO_ARGS+=" -d \"$name\"" ;;
+			esac
+		done <<< "$records"
+		_MORPHE_AUTO_KEY="$key"
+	fi
+	printf '%s' "$_MORPHE_AUTO_ARGS"
+}
+
 morphe_patch() {
 	local app="$1" options_key="$2" mode="$3" abi="$4"
 	local mpp_args="" mpp_file out="./release/$app-$options_key.apk"
-	local split_args="" continue_flag=" --continue-on-error"
+	local split_args="" continue_flag=" --continue-on-error" auto_args=""
+	local bundles=()
 
 	if [ -n "$abi" ]; then
 		split_args=" --striplibs $abi"
@@ -924,13 +1057,19 @@ morphe_patch() {
 		for mpp_file in *.mpp; do
 			[ -f "$mpp_file" ] || continue
 			mpp_args+=" -p \"$mpp_file\""
+			bundles+=("$mpp_file")
 		done
 	else
 		mpp_file=$(ls ./*.mpp 2> /dev/null | head -n1)
 		mpp_args=" -p \"$mpp_file\""
+		bundles+=("$mpp_file")
 	fi
 
-	eval java -jar morphe-desktop-*.jar patch$mpp_args$excludePatches$includePatches --options-file ./src/options/$options_key.json$split_args --keystore=./src/keystore/morphe.keystore --force$continue_flag --out="$out" ./download/$app.apk
+	if [ -n "$keepPrefix" ]; then
+		auto_args=$(morphe_auto_exclude "$keepPrefix" "${bundles[@]}") || return 1
+	fi
+
+	eval java -jar morphe-desktop-*.jar patch$mpp_args$excludePatches$includePatches$exclusivePatches$auto_args --options-file ./src/options/$options_key.json$split_args --keystore=./src/keystore/morphe.keystore --force$continue_flag --out="$out" ./download/$app.apk
 	return $?
 }
 
@@ -959,6 +1098,8 @@ patch() {
 	unset lock_version
 	unset excludePatches
 	unset includePatches
+	unset keepPrefix
+	unset exclusivePatches
 }
 
 patch_multi() {
@@ -986,6 +1127,8 @@ patch_multi() {
 	unset lock_version
 	unset excludePatches
 	unset includePatches
+	unset keepPrefix
+	unset exclusivePatches
 }
 
 lspatch() {
