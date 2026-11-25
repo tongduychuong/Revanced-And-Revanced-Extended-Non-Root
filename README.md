@@ -138,6 +138,8 @@ Download
 
 #### [Google Recorder](README.md#Google-Recorder-1)
 
+#### [Amazon Shopping](README.md#amazon-shopping-1)
+
 </details>
 
 ## [MicroG RE:](https://github.com/MorpheApp/MicroG-RE)
@@ -926,6 +928,10 @@ And if you can't install Messenger back again because they check the sign, the a
 
 [Universal](../../releases/download/all/discord-reseam.apk)
 
+### [Venus:](https://github.com/VenusIsJaded/Venus-Patches)
+
+[Universal](../../releases/download/all/discord-venus.apk)
+
 ---
 
 ### [Telegram:](https://play.google.com/store/apps/details?id=org.telegram.messenger)
@@ -1057,6 +1063,14 @@ Requires MicroG to be installed
 ### [Dropped Patches by indrastorms:](https://github.com/indrastorms/Dropped-Patches)
 
 [Universal](../../releases/download/all/fx-file-explorer-indrastorms.apk)
+
+---
+
+### [Amazon Shopping:](https://play.google.com/store/apps/details?id=com.amazon.mShop.android.shopping)
+
+### [rushiranpise:](https://github.com/rushiranpise/morphe-patches)
+
+[Universal](../../releases/download/all/amazon-shopping-rushiranpise.apk)
 
 ### ⚠️ Libraries and resources used in this repository:
 
@@ -1214,6 +1228,13 @@ Requires MicroG to be installed
   <summary>bufferk</summary>
 
 [Patches](https://github.com/bufferk/morphe-patches) - [GPL-3.0](https://github.com/bufferk/morphe-patches/blob/main/LICENSE)
+
+</details>
+
+<details>
+  <summary>VenusIsJaded</summary>
+
+[Patches](https://github.com/VenusIsJaded/Venus-Patches) - [GPL-3.0](https://github.com/VenusIsJaded/Venus-Patches/blob/main/LICENSE)
 
 </details>
 
